@@ -292,6 +292,10 @@ extern    int       drawweap[MAXPLAYERS];
 
 extern    long      flags32[];                                                  
 
+#define   BOBBMAX        	512
+#define   BOBBDELTA      	128
+#define   WEAPONBOBBDELTA   64
+
 #define   TOGGLE_RETICULE     0
 #define   TOGGLE_TIME         1
 #define   TOGGLE_SCORE        2

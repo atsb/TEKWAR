@@ -102,7 +102,6 @@ extern    char      jcalibration,
                     jstickenabled;
 extern    int       jctrx,jctry;
 extern    char      spaceballon;
-extern    char      bypasscdcheck;
 
 void      (__interrupt __far *oldgphandler)();
 void      domenuinput(void);                                          
@@ -2444,7 +2443,6 @@ tekargv(short int argc,char **argv)
                argmatch++;
           }    
           if (strcmp(strupr(argv[p]),"NETNAME") == 0) {            
-               bypasscdcheck=1;
                if( (p+1) < argc ) {
                     memset(localname,0,sizeof(localname));
                     memcpy(localname,strupr(argv[p+1]),10);

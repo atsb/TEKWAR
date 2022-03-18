@@ -27,7 +27,6 @@
 #define   GHRS           3600
 
 struct    dostime_t dtime;
-char      bypasscdcheck=0;
 char      cddriveletter='D';
 unsigned  criticalerror=0L;
 
@@ -732,11 +731,5 @@ tektextmode(void)
     #endif
 
      installgphandler();
-	 
-	 bypasscdcheck == 1;
-
      videocheck();
 }
-
-
-

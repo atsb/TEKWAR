@@ -1213,7 +1213,7 @@ tekdrawgun(long gun,short p)
           case GUN06FIRESTART:
           case GUN07FIRESTART:
           case GUN08FIRESTART:
-               bobtics+=( 1 + (((syncbits[p]&256)>0)<<2) );
+               bobtics+=( 1 + (((syncbits[p]&256)>0)) );
                if( bobtics > TICSPERFRAME ) {
                     bobtics=0;
                     gunbob++;
