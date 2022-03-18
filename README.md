@@ -13,7 +13,7 @@ BUILD:
 wmake BUILD.MAK
 
 TEKWAR:
-TEKWAR.BAR
+TEKWAR.BAT
 
 Enjoy the best build engine game ever!
 
