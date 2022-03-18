@@ -2,7 +2,7 @@
 ; *   TEKASM.ASM  - assembly code for Tekwar game                           *
 ; *                                                                         *
 ; *                                                      3/29/95 Jeff S.    *
-; *	Ported to TASM						   3/18/22 Adam B.    *
+; *	Ported to TASM				         3/18/22 Adam B.    *
 ; ***************************************************************************/
                 
 .386p   ; 386, 486, Pentium
