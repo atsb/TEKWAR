@@ -1,0 +1,137 @@
+Turbo Assembler	 Version 3.1	    03/18/22 09:29:22	    Page 1
+jstick.asm
+
+
+
+      1					 ; JSTICK.ASM
+      2					 ;
+      3					 ; by Les Bird for Witchaven
+      4					 ;
+      5					 ; Copyright (c) 1995 IntraCorp, Inc.
+      6					 ;
+      7					 ; ***********************************************************************
+      8					 ; *	 void jstick()	 - this	'C' callable routine reads the position	 *
+      9					 ; *			   of joystick #1 attached to a	game-port (0x201)*
+     10					 ; *			   and returns the X position in variable _joyx	 *
+     11					 ; *			   and the Y position in variable _joyy	and the	 *
+     12					 ; *			   button status in variable _joyb		 *
+     13					 ; *									 *
+     14					 ; *	 _joyb	 - xxxx.0000						 *
+     15					 ; *		     ||							 *
+     16					 ; *		     |`-- 0 if joystick	#1, button #1 pressed		 *
+     17					 ; *		     `--- 0 if joystick	#1, button #2 pressed		 *
+     18					 ; *									 *
+     19					 ; *	 'C' example:							 *
+     20					 ; *									 *
+     21					 ; *	 extern								 *
+     22					 ; *	 int joyb,joyx,joyy;						 *
+     23					 ; *									 *
+     24					 ; *	 void								 *
+     25					 ; *	 main(void)							 *
+     26					 ; *	 {								 *
+     27					 ; *	      jstick();							 *
+     28					 ; *	      printf("Joystick X position = %d",joyx);			 *
+     29					 ; *	      printf("Joystick Y position = %d",joyy);			 *
+     30					 ; *	      printf("Joystick button stat= %d",joyb);			 *
+     31					 ; *	 }								 *
+     32					 ; *									 *
+     33					 ; ***********************************************************************
+     34					 ;
+     35					 .386p
+     36					 ;
+     37		  =0201			 JOYPORT equ	 201H		 ; game-port I/O address
+     38					 ;
+     39	00000000			 _DATA	 SEGMENT DWORD PUBLIC 'DATA'
+     40					 ;
+     41					 EXTRN	 _joyb:BYTE	 ;   db	     0		     ; joystick	button status
+     42					 EXTRN	 _joyx:WORD	 ;   dw	     0		     ; joystick	X position
+     43					 EXTRN	 _joyy:WORD	 ;   dw	     0		     ; joystick	Y position
+     44	00000000  ??			 joydn	 db	 ?		 ; internal compare value
+     45	00000001  ????			 joycr	 dw	 ?		 ; internal counter
+     46					 ;
+     47	00000003			 _DATA	 ENDS
+     48					 ;
+     49	00000000			 _TEXT	 SEGMENT BYTE PUBLIC 'CODE'
+     50						 ASSUME	 cs:_TEXT, ds:_DATA
+     51					 ;
+     52					 PUBLIC	 jstick_
+     53	00000000			 jstick_ PROC	 near
+     54					 ;
+     55	00000000  66| 9C			 pushf
+     56	00000002  55				 push	 ebp
+     57	00000003  FA				 cli
+Turbo Assembler	 Version 3.1	    03/18/22 09:29:22	    Page 2
+jstick.asm
+
+
+
+     58	00000004  66| BB 0000			 mov	 bx,0
+     59	00000008  66| B9 0800			 mov	 cx,800h
+     60	0000000C  66| 89 0D 00000001r		 mov	 joycr,cx
+     61	00000013  66| 33 C9			 xor	 cx,cx
+     62	00000016  66| BA 0201			 mov	 dx,JOYPORT
+     63	0000001A  EC				 in	 al,dx
+     64	0000001B  A2 00000000e			 mov	 _joyb,al
+     65	00000020  24 0F				 and	 al,0fh
+     66	00000022  A2 00000000r			 mov	 joydn,al
+     67	00000027  EE				 out	 dx,al
+     68	00000028  EC			 jloop:	 in	 al,dx
+     69	00000029  66| 50			 push	 ax
+     70	0000002B  24 0F				 and	 al,0fh
+     71	0000002D  3A 05	00000000r		 cmp	 al,joydn
+     72	00000033  66| 58			 pop	 ax
+     73	00000035  74 1B				 jz	 jretrn
+     74	00000037  66| FF 0D 00000001r		 dec	 joycr
+     75	0000003E  74 12				 jz	 jretrn
+     76	00000040  66| 50			 push	 ax
+     77	00000042  24 01				 and	 al,1
+     78	00000044  66| 58			 pop	 ax
+     79	00000046  74 02				 jz	 jupdy
+     80	00000048  66| 43			 inc	 bx
+     81	0000004A  24 02			 jupdy:	 and	 al,2
+     82	0000004C  74 DA				 jz	 jloop
+     83	0000004E  66| 41			 inc	 cx
+     84	00000050  EB D6				 jmp	 jloop
+     85	00000052  66| 89 1D 00000000e	 jretrn: mov	 _joyx,bx
+     86	00000059  66| 89 0D 00000000e		 mov	 _joyy,cx
+     87	00000060  5D				 pop	 ebp
+     88	00000061  66| 9D			 popf
+     89	00000063  C3				 ret
+     90					 ;
+     91	00000064			 jstick_ ENDP
+     92					 ;
+     93	00000064			 _TEXT	 ENDS
+     94					 ;
+     95						 END
+Turbo Assembler	 Version 3.1	    03/18/22 09:29:22	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/18/22"
+??FILENAME			  Text	 "jstick  "
+??TIME				  Text	 "09:29:22"
+??VERSION			  Number 030A
+@CPU				  Text	 0F8FH
+@CURSEG				  Text	 _TEXT
+@FILENAME			  Text	 JSTICK
+@WORDSIZE			  Text	 4
+JLOOP				  Near	 _TEXT:0028
+JOYCR				  Word	 _DATA:0001
+JOYDN				  Byte	 _DATA:0000
+JOYPORT				  Number 0201
+JRETRN				  Near	 _TEXT:0052
+JSTICK_				  Near	 _TEXT:0000
+JUPDY				  Near	 _TEXT:004A
+_JOYB				  Byte	 _DATA:---- Extern
+_JOYX				  Word	 _DATA:---- Extern
+_JOYY				  Word	 _DATA:---- Extern
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+_DATA				  32  0003 Dword  Public  DATA
+_TEXT				  32  0064 Byte	  Public  CODE
+
